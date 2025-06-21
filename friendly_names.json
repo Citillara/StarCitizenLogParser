@@ -1,7 +1,15 @@
 ﻿{
   "HRST_LaserBeam_Bespoke": "Idris Laser Cannon",
   "MISC_Starlancer_TAC": "MISC Starlancer Tactical",
-  "pyro1": "Pyro",
+  "pyro1": "Pyro I",
   "PU_Human_Enemy_GroundCombat_NPC_ASD_soldier": "NPC ASD Soldier",
-  "behr_lmg_ballistic_01": "FS-9 LMG"
+  "behr_lmg_ballistic_01": "FS-9 LMG",
+  "DRAK_Cutlass_Black": "DRAKE Cutlass Black",
+  "AEGS_Gladius": "AEGIS Gladius",
+  "vlk_adult_irradiated": "Adult Worm",
+  "vlk_juvenile_irradiated": "Young Worm",
+  "Kopion_Irradiated": "Kopion",
+  "PU_Human_Enemy_GroundCombat_NPC_ASD_techie": "NPC ASD Techie",
+  "asd_labresearch_int_01a" :  "ASD Lab Interior 01a"
+
 }

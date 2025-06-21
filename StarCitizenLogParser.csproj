@@ -24,5 +24,10 @@
     <PublishTrimmed>false</PublishTrimmed> <!-- Always false with winforms -->
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
+  <ItemGroup>
+    <None Update="friendly_names.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

@@ -90,23 +90,34 @@ namespace StarCitizenLogParser
         private static string TakeBetween(string src, string left, string right,
                                           ref int idx)
         {
-            var start = src.IndexOf(left, idx, StringComparison.Ordinal) + left.Length;
-            var end = src.IndexOf(right, start, StringComparison.Ordinal);
+            int istart = src.IndexOf(left, idx, StringComparison.InvariantCulture);
+            if (istart == -1)
+                throw new DataMisalignedException("Report this bug (start) and this line : " + src);
+            int start = istart + left.Length;
+            int end = src.IndexOf(right, start, StringComparison.InvariantCulture);
+            if (end == -1)
+                throw new DataMisalignedException("Report this bug (end) and this line : " + src);
             idx = end + right.Length;
             return src[start..end];
         }
 
-        private static Vec3 ParseVec3(string src)
+        private static Tuple<Vec3, Vec3> ParseVec3(string src)
         {
             // src e.g. "x: -141105.640836, y: 312066.617001, z: 228710.641646"
-            var parts = src.Split(',', StringSplitOptions.TrimEntries);
-            double x = double.Parse(parts[0].Split(':')[1],
-                                    CultureInfo.InvariantCulture);
-            double y = double.Parse(parts[1].Split(':')[1],
-                                    CultureInfo.InvariantCulture);
-            double z = double.Parse(parts[2].Split(':')[1],
-                                    CultureInfo.InvariantCulture);
-            return new Vec3(x, y, z);
+            var parts = src.Split(new string[] { ",", "vel" }, StringSplitOptions.TrimEntries);
+            double x = double.Parse(parts[0].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+            double y = double.Parse(parts[1].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+            double z = double.Parse(parts[2].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+
+            if (src.Contains("vel"))
+            {
+                double x2 = double.Parse(parts[3].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+                double y2 = double.Parse(parts[4].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+                double z2 = double.Parse(parts[5].Split(':')[1], CultureInfo.GetCultureInfo("en-US"));
+                return new Tuple<Vec3, Vec3>(new Vec3(x, y, z),  new Vec3(x2, y2, z2));
+            }
+
+            return new Tuple<Vec3, Vec3>(new Vec3(x, y, z), new Vec3(0, 0, 0));
         }
 
         // ---------------------------------------------------------------------
@@ -121,19 +132,22 @@ namespace StarCitizenLogParser
             var zone = TakeBetween(src, "in zone '", "'", ref idx);
 
             var posString = TakeBetween(src, "[pos ", "]", ref idx);
-            var position = ParseVec3(posString);
+            var posVel = ParseVec3(posString);
+            var position = posVel.Item1;
+            var velocity = posVel.Item2;
 
-            var velString = TakeBetween(src, "vel ", "]", ref idx);
-            var velocity = ParseVec3(velString);
+            //var velString = TakeBetween(src, "vel ", "]", ref idx);
+            //var velocity = ParseVec3(velString);
 
             var driverName = TakeBetween(src, "driven by '", "'", ref idx);
             var driverId = TakeBetween(src, "[", "]", ref idx);
 
             var fromLevel = int.Parse(TakeBetween(src,
                                       "advanced from destroy level ", " to ", ref idx));
-            var toLevel = int.Parse(TakeBetween(src, " to ", " caused", ref idx));
+            idx -=5;
+            var toLevel = int.Parse(TakeBetween(src, " to ", " c", ref idx));
 
-            var causedBy = TakeBetween(src, "caused by '", "'", ref idx);
+            var causedBy = TakeBetween(src, "aused by '", "'", ref idx);
             var causedId = TakeBetween(src, "[", "]", ref idx);
 
             var causeTag = TakeBetween(src, "with '", "'", ref idx);
@@ -189,8 +203,8 @@ namespace StarCitizenLogParser
             var dmgType = TakeBetween(src, "with damage type '", "'", ref idx);
 
             var dirString = TakeBetween(src, "direction ", "[", ref idx);
-            var direction = ParseVec3(dirString);
-
+            var direction = ParseVec3(dirString).Item1;
+            idx -= 1;
             var tag1 = TakeBetween(src, "[", "]", ref idx);
             var tag2 = TakeBetween(src, "[", "]", ref idx);
 

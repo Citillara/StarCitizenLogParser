@@ -62,6 +62,7 @@ namespace StarCitizenLogParser
                                     sb.Append(@"\b0 ");
                                     sb.Append(" backspaced");
                                     sb.Append(@"\par");
+                                    sb.AppendLine();
                                     break;
                                 }
                                 if (a.VictimName.Contains("NPC"))
@@ -83,7 +84,38 @@ namespace StarCitizenLogParser
                         case EventKind.VehicleDestruction:
                             {
                                 var v = (VehicleDestructionEntry)logEntry;
-                                sb.AppendLine($"{ScNames.ToFriendly(v.CausedByName)} destroyed {ScNames.ToFriendly(v.VehicleName)} of {ScNames.ToFriendly(v.DriverName)}");
+
+                                // 1) “Back-spaced” (driver, causer and vehicle have the same name)
+                                if (v.DriverName == v.CausedByName && v.DriverName == v.VehicleName)
+                                {
+                                    sb.Append(@"\b ");
+                                    sb.Append(ScNames.ToFriendly(v.CausedByName));
+                                    sb.Append(@"\b0 ");
+                                    sb.Append(" backspaced");
+                                    sb.Append(@"\par");
+                                    sb.AppendLine();
+                                    break;
+                                }
+
+                                // 3) Normal destruction line
+                                sb.Append(@"\b ");                                   // start bold
+                                sb.Append(ScNames.ToFriendly(v.CausedByName));
+                                sb.Append(@"\b0 ");                                  // end bold
+                                sb.Append(" destroyed ");
+                                sb.Append(ScNames.ToFriendly(v.VehicleName));
+                                sb.Append(" of ");
+                                sb.Append(ScNames.ToFriendly(v.DriverName));
+
+                                // Optional: include the zone if your VehicleDestructionEntry exposes it
+                                if (!string.IsNullOrEmpty(v.Zone))
+                                {
+                                    sb.Append(" in ");
+                                    sb.Append(ScNames.ToFriendly(v.Zone));
+                                }
+
+                                sb.Append(@"\cf0 ");
+                                sb.Append(@"\par");
+                                sb.AppendLine();
                                 break;
                             }
                         default: break;
