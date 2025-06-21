@@ -3,19 +3,26 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;Portable</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="ScNames.cs" />
-  </ItemGroup>
+  <!--  🔽  Only for the new configuration  -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Portable'">
+    <!-- What machine you’ll run on -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
 
-  <ItemGroup>
-    <None Update="friendly_names.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <!-- Bundle the runtime -->
+    <SelfContained>true</SelfContained>
+
+    <!-- Put everything in one file -->
+    <PublishSingleFile>true</PublishSingleFile>
+
+    <!-- Optional space-savers -->
+    <PublishTrimmed>false</PublishTrimmed> <!-- Always false with winforms -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
 
 </Project>
