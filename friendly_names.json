@@ -1,15 +1,23 @@
 ﻿{
-  "HRST_LaserBeam_Bespoke": "Idris Laser Cannon",
-  "MISC_Starlancer_TAC": "MISC Starlancer Tactical",
-  "pyro1": "Pyro I",
-  "PU_Human_Enemy_GroundCombat_NPC_ASD_soldier": "NPC ASD Soldier",
+  "asd_labresearch_int_01a": "ASD Lab Interior 01a",
+  "AEGS_Gladius": "Aegis Gladius",
+  "CNOU_Mustang_Alpha": "CNOU Mustang Alpha",
+  "DRAK_Cutlass_Black": "Drake Cutlass Black",
+  "ESPR_Prowler_Utility": "Esperia Prowler Utility",
   "behr_lmg_ballistic_01": "FS-9 LMG",
-  "DRAK_Cutlass_Black": "DRAKE Cutlass Black",
-  "AEGS_Gladius": "AEGIS Gladius",
-  "vlk_adult_irradiated": "Adult Worm",
-  "vlk_juvenile_irradiated": "Young Worm",
+  "HRST_LaserBeam_Bespoke": "Idris Laser Cannon",
   "Kopion_Irradiated": "Kopion",
+  "MISC_Starlancer_TAC": "MISC Starlancer Tactical",
+  "MRAI_Guardian": "Mirai Guardian",
+  "MRAI_Guardian_MX": "Mirai Guardian MX",
+  "PU_Human_Enemy_GroundCombat_NPC_ASD_cqc": "NPC ASD CQC",
+  "PU_Human_Enemy_GroundCombat_NPC_ASD_sniper": "NPC ASD Sniper",
+  "PU_Human_Enemy_GroundCombat_NPC_ASD_soldier": "NPC ASD Soldier",
   "PU_Human_Enemy_GroundCombat_NPC_ASD_techie": "NPC ASD Techie",
-  "asd_labresearch_int_01a" :  "ASD Lab Interior 01a"
-
+  "behr_rifle_ballistic_02_civilian": "P8-AR Rifle",
+  "pyro1": "Pyro I",
+  "RSI_Aurora_MR": "RSI Aurora MR",
+  "RSI_Zeus_ES": "RSI Zeus Mk II ES",
+  "vlk_juvenile_irradiated": "Young Worm",
+  "vlk_adult_irradiated": "Adult Worm"
 }
