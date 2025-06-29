@@ -17,39 +17,102 @@ internal static class ScRtfLogFormatter
 
         using var reader = new StringReader(rawLog);
         string? line;
+
+        HostilityEventEntry? previousHostilityEventEntry = null;
+        int hostilityEventCounter = 0;
+
         while ((line = reader.ReadLine()) != null)
         {
             var entry = ScReader.TryParse(line);
             if (entry is null) continue;
 
-            // Localised, unambiguous timestamp
-            sb.Append(EscapeRtf(entry.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")));
-            sb.Append(" - ");
+            // Immediately reset if it's another type of event and append the counter immediately
+            if (previousHostilityEventEntry != null && entry.Kind != EventKind.HostilityEvent)
+            {
+                AppendCounter(sb, hostilityEventCounter);
+                sb.Append(ColorOff).Append(@"\par ");
+                // Localised, unambiguous timestamp
+                sb.Append(EscapeRtf(entry.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")));
+                sb.Append(" - ");
+                previousHostilityEventEntry = null;
+                hostilityEventCounter = 0;
+            }
+            else if (previousHostilityEventEntry != null && entry.Kind == EventKind.HostilityEvent)
+            {
+                // skip timestamp
+            } 
+            else
+            {
+                // Localised, unambiguous timestamp
+                sb.Append(EscapeRtf(entry.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")));
+                sb.Append(" - ");
+            }
+
+
 
             switch (entry)
             {
                 case ActorDeathEntry a:
                     AppendActorDeath(sb, a);
+                    sb.Append(ColorOff).Append(@"\par ");
                     break;
 
                 case VehicleDestructionEntry v:
                     AppendVehicleDestruction(sb, v);
+                    sb.Append(ColorOff).Append(@"\par ");
                     break;
 
                 case HostilityEventEntry h:
-                    AppendHostility(sb, h);
+                    if (previousHostilityEventEntry == null)
+                    {
+                        AppendHostility(sb, h);
+                        previousHostilityEventEntry = h;
+                    }
+                    else
+                    {
+                        if(AreDisplayEquals(h, previousHostilityEventEntry))
+                        {
+                            hostilityEventCounter++;
+                            continue; // Skip to next loop, don't append anything
+                        }
+                        else
+                        {
+                            if(hostilityEventCounter > 0)
+                                AppendCounter(sb, hostilityEventCounter);
+                            sb.Append(ColorOff).Append(@"\par ");
+                            // Localised, unambiguous timestamp
+                            sb.Append(EscapeRtf(entry.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")));
+                            sb.Append(" - ");
+                            AppendHostility(sb, h);
+                            previousHostilityEventEntry = h;
+                            hostilityEventCounter = 0;
+                        }
+                    }
+
                     break;
 
                 default:
                     sb.Append($"Unknown event: {EscapeRtf(entry.Kind.ToString())}");
+                    sb.Append(ColorOff).Append(@"\par ");
                     break;
             }
 
-            sb.Append(ColorOff).Append(@"\par ");
         }
 
         sb.Append('}');
         return sb.ToString();
+    }
+
+    private static void AppendCounter(StringBuilder sb, int counter)
+    {
+        sb.Append($"(+ {counter} identical events)");
+    }
+
+    private static bool AreDisplayEquals(HostilityEventEntry h1, HostilityEventEntry h2)
+    {
+        return ((h1.SourceName == h2.SourceName)
+            && (h1.TargetName == h2.TargetName)
+            && (h1.ChildName == h2.ChildName));
     }
 
     /* ---------- helper blocks ---------- */
